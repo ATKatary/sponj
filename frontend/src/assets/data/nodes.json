@@ -1,0 +1,61 @@
+{
+    "txt": {
+        "tooltip": "text",
+        "icon": "fa-solid fa-font",
+        "disabled": false
+    },
+    
+    "img": {
+        "tooltip": "upload image",
+        "icon": "fa-solid fa-upload",
+        "disabled": false
+    },
+
+    "sketch": {
+        "tooltip": "upload sketch",
+        "icon": "fa-solid fa-dragon",
+        "disabled": false
+    }, 
+
+    "generatedImg": {
+        "tooltip": "image generator",
+        "icon": "fa-solid fa-image",
+        "disabled": false
+    },
+
+    "mesh": {
+        "tooltip": "mesh generator",
+        "icon": "fa-solid fa-dice-d6",
+        "disabled": false
+    },
+
+    "texture": {
+        "tooltip": "texture mesh",
+        "icon": "fa-solid fa-paintbrush",
+        "disabled": true
+    },
+
+    "remesh": {
+        "tooltip": "re-mesh",
+        "icon": "fa-solid fa-sliders",
+        "disabled": true
+    },
+
+    "segment": {
+        "tooltip": "segment mesh",
+        "icon": "fa-solid fa-scissors",
+        "disabled": true
+    },
+
+    "playground": {
+        "tooltip": "3d playground",
+        "icon": "fa-solid fa-cubes",
+        "disabled": true
+    },
+
+    "comment": {
+        "tooltip": "comment",
+        "icon": "fa-solid fa-comment",
+        "disabled": false
+    }
+}

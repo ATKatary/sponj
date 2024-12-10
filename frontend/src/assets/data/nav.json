@@ -1,0 +1,25 @@
+{
+    "home": [
+        {
+            "id": "projects",
+            "title": "All projects",
+            "href": "/akatary/projects",
+            "icon": "fa-fas fa-folder"
+        }
+    ],
+
+    "playground": [
+        {
+            "href": "",
+            "id": "txt2Mesh",
+            "title": "Text to Mesh",
+            "icon": "fa-fas fa-file"
+        },
+        {
+            "href": "",
+            "id": "img2Mesh",
+            "title": "Image to Mesh",
+            "icon": "fa-fas fa-file-image"
+        }
+    ]
+}

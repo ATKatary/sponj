@@ -1,0 +1,42 @@
+@media (prefers-color-scheme: light) {
+    :root {
+        --bg-primary: #fffbf5;  
+        --bg-secondary: #E1E1E1;
+
+        --font-color-primary: #3E3E3E;
+        --font-color-secondary: #2B2B2B;
+    }   
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-primary: #3E3E3E;  
+        --bg-secondary: #2B2B2B;
+
+        --font-color-primary: #fffbf5;
+        --font-color-secondary: #E1E1E1;
+    }   
+}
+
+:root {
+    --border-radius: 15px;
+    --btn-border-radius: 10px;
+
+    --controls-width: 275px;
+
+    --primary: #FF6602;
+    --secondary: #FF8F3B;
+    --tertiary: #3E3E3E;
+    --quaternary: #E1E1E1;
+
+    --error: #ef5050;
+    --success: #55dd99;
+
+    --node-color-txt: #b9b0b0;
+    --node-color-img: #b9b0b0;
+    --node-color-mesh: #887e7e;
+    --node-color-sketch: #b9b0b0;
+    --node-color-generatedImg: #a09494;
+
+    --node-font-color: var(--font-color-primary);
+}
