@@ -14,6 +14,7 @@ export const usePlaygroundStore = create<PlaygroundState>((set, get) => ({
     meshes: [],
     mode: "mesh",
     selected: "",
+    highlighted: [],
     tool: "translate",
     loading: {on: false},
 
@@ -56,7 +57,6 @@ export const usePlaygroundStore = create<PlaygroundState>((set, get) => ({
         const state = get()
         console.log(`[updateMesh] >> updating mesh ${id}...`)
 
-        console.log(mesh)
         set({
             meshes: update(state.meshes, {id}, ['id'], mesh)
         })
@@ -75,10 +75,23 @@ export const usePlaygroundStore = create<PlaygroundState>((set, get) => ({
     },
 
     setSelected: (selected) => {
-        set({selected})
+        set({
+            selected,
+            highlighted: selected === "" ? [] : [selected]
+        })
     },
 
     setLoading: (loading) => {
         set({loading})
+    },
+
+    addHighlight: (id) => {
+        const state = get()
+        set({highlighted: [...state.highlighted, id]})
+    },
+
+    removeHighlight: (id) => {
+        const state = get()
+        set({highlighted: state.highlighted.filter(id_h => id_h !== id)})
     }
 }))

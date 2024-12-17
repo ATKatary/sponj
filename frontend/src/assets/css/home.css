@@ -4,16 +4,17 @@
         position: absolute;
         top: var(--nav-top);
         left: calc(var(--nav-width) + 2*var(--nav-left) + 20px);
-        width: calc(100% - var(--nav-width) - 3 *var(--nav-left) - 40px);
+        width: calc(100% - var(--nav-width) - 3 *var(--nav-left));
     }
 
     #home-content .crumb {
-        top: 0;
+        /* margin-top: 5px; */
         position: absolute;
+        top: var(--nav-top);
     }
 
     #home-content a {
-        text-decoration: none;
+        text-decoration: underline;
         letter-spacing: -0.003px;
         color: var(--font-color-secondary);
         font-size: var(--font-size-body-medium);
@@ -51,5 +52,11 @@
 
     .promo-container button {
         width: 150px;
+    }
+
+    .saving {
+        top: 0;
+        margin-top: 0;
+        position: absolute;
     }
 }

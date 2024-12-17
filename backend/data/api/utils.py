@@ -1,7 +1,7 @@
 import base64
 from data.models import Data
 
-AI_API_URL = "http://localhost:8001/ai"
+AI_API_URL = "http://45.33.17.11:8002/ai"
 
 def parse_data(data):
     data_info = {

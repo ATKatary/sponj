@@ -5,7 +5,7 @@ import { Img } from "../../../components/img"
 
 // third party
 import { nodeDataType } from "../../types"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 
 type MeshNodeProps = JSX.IntrinsicElements["div"] & {
     id: string
@@ -13,8 +13,11 @@ type MeshNodeProps = JSX.IntrinsicElements["div"] & {
 }
 
 export default function MeshNode({id, data: {title, src, playground}, ...props}: MeshNodeProps) {
-    const hasData = playground? true : false
+    const params = useParams()
     const navigate = useNavigate()
+
+    const uid = params.uid
+    const hasData = playground? true : false
 
     return (
         <BaseNode 
@@ -29,13 +32,12 @@ export default function MeshNode({id, data: {title, src, playground}, ...props}:
             targets={["style", "geometry"]}
             // style={{height: hasData? 175 : 120, width: 175}}
         >
-            <a href={playground? `/akatary/playground/${playground.id}` : "#"} target="_blank">
-                <Img 
-                    disabled 
-                    src={playground?.meshes[0].gif} 
-                    placeholder="Generated mesh will appear here" style={{textAlign: "center"}}
-                />
-            </a>
+            <Img 
+                disabled 
+                src={playground?.meshes[0].gif} 
+                href={playground? `/${uid}/playground/${playground.id}` : undefined}
+                placeholder="Generated mesh will appear here" style={{textAlign: "center"}}
+            />
         </BaseNode>
     )
 }

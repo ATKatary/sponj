@@ -3,6 +3,7 @@ import zipfile
 
 from utils.mesh import SponjMesh
 from utils import download, rename
+from api.process import parse_style
 from utils.img import base64_to_img
 from api.schema import Geometry, Style
 from api.vars import (
@@ -16,8 +17,13 @@ from api.vars import (
 )
 
 def generate_mesh(path_id: str, geo: Geometry, style: Style) -> str | None:
+    style_prompt = parse_style(style)
+
     if geo.prompt:
         prompt = geo.prompt 
+        if style_prompt is not None:
+            prompt = f"{prompt}. With the following style: {style_prompt}"
+
         mesh_id = tripo3d_client.text_to_mesh(prompt=prompt)
 
         glb_task_to_path[mesh_id] = path_id
@@ -33,10 +39,14 @@ def generate_mesh(path_id: str, geo: Geometry, style: Style) -> str | None:
 
         if geo.generatedImg:
             img_no_bg = base64_to_img(geo.generatedImg)
+            if style_prompt is not None:
+                img_no_bg = sd_client.structure(img_no_bg, f"{style_prompt}")
+                img_no_bg = sd_client.remove_bg(img_no_bg)
 
         else:
-            caption = openai_client.caption(img)
-            structured_img = sd_client.structure(img, f"{caption}. high resolution, 8k, photorealistic")
+            if style_prompt is None:
+                style_prompt = openai_client.caption(img)
+            structured_img = sd_client.structure(img, f"{style_prompt}")
             img_no_bg = sd_client.remove_bg(structured_img)
 
         mesh_id = tripo3d_client.generate_mesh(img_no_bg)

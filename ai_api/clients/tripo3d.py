@@ -80,39 +80,42 @@ class Tripo3dClient(BaseClient):
         url = f"{self.endpoints['watch']}/{task_id}"
         self.log(f"[Tripo3dClient][watch] >> watching {url}...")
 
-        async with websockets.connect(url, additional_headers=self.headers) as websocket:
-            while True:
-                message = await websocket.recv()
-                try:
-                    data = json.loads(message)
-                    self.log(f"[Tripo3dClient][watch] (data) >> {data}")
+        try:
+            async with websockets.connect(url, additional_headers=self.headers, ping_interval=None) as websocket:
+                while True:
+                    message = await websocket.recv()
+                    try:
+                        data = json.loads(message)
+                        self.log(f"[Tripo3dClient][watch] (data) >> {data}")
 
-                    data = data['data']
-                    result = data['result']
-                    status = data['status']
-                    task_id = data['task_id']
-                    task_input = data['input']
-                    
-                    if status == 'success':
-                        ext = "glb"
-                        if 'format' in task_input:
-                            ext = task_input['format'].lower()
+                        data = data['data']
+                        result = data['result']
+                        status = data['status']
+                        task_id = data['task_id']
+                        task_input = data['input']
                         
-                        mesh_url = None
-                        if ext == "glb":
-                            mesh_url = result['pbr_model']['url']
-                        elif ext == "obj": 
-                            mesh_url = result['model']['url']
+                        if status == 'success':
+                            ext = "glb"
+                            if 'format' in task_input:
+                                ext = task_input['format'].lower()
+                            
+                            mesh_url = None
+                            if ext == "glb":
+                                mesh_url = result['pbr_model']['url']
+                            elif ext == "obj": 
+                                mesh_url = result['model']['url']
 
-                        if on_success is not None and mesh_url is not None:
-                            on_success(task_id, mesh_url, ext, data['type'])
+                            if on_success is not None and mesh_url is not None:
+                                on_success(task_id, mesh_url, ext, data['type'])
 
-                    if status not in ['running', 'queued']:
+                        if status not in ['running', 'queued']:
+                            if not all: break
+                            
+                    except json.JSONDecodeError:
+                        self.log(f"[Tripo3dClient][watch] non-json message >> {message}")
                         if not all: break
-                        
-                except json.JSONDecodeError:
-                    self.log(f"[Tripo3dClient][watch] non-json message >> {message}")
-                    if not all: break
+        except Exception as error:
+            self.watch(task_id, on_success, **kwargs)
         return data
     
     def upload(self, img: Image, **kwargs):

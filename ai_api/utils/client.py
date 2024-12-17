@@ -13,7 +13,10 @@ class BaseClient(Logger):
             data = self.parse_params(params)
             kwargs[param_key] = data
 
-        self.log(f"[post] (kwargs) >> {kwargs}")
+        args_to_log = {arg_name: arg_value for arg_name, arg_value in kwargs.items() if arg_name not in ['files']}
+        if 'files' in kwargs: args_to_log['files'] = {}
+        
+        self.log(f"[post] (kwargs) >> {args_to_log}")
         response = requests.post(url, **kwargs)
 
         return self.validate(response)

@@ -1,7 +1,7 @@
 // custom imports
-import { CycleDetected, NodeInputMissing } from "./errors"
-import { mbType, nodeStatusType } from "./types"
 import { projectType } from "../project/types"
+import { mbType, nodeStatusType } from "./types"
+import { CycleDetected, NodeInputMissing } from "./errors"
 import { addToLocalStorage, filter, find, update } from "../utils"
 
 // third party

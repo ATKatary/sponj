@@ -43,4 +43,8 @@
         right: var(--nav-left);
         margin: 12px 10px 8px 5px;
     }
+
+    .mb-btn-add:hover {
+        background-color: var(--secondary);
+    }
 }

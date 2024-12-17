@@ -1,11 +1,12 @@
 // custom imports
 import { navStateType } from "../nav/types"
 import { projectType } from "../project/types"
-import { createProject } from "../project/api"
+import { createProject, editProject } from "../project/api"
 import { ProjectThumbnail } from "../project/thumbnail"
 
 // third party
 import { useLocation, useNavigate, useParams } from "react-router-dom"
+import { EditableH3 } from "./editable"
 
 type ProjectsProps = JSX.IntrinsicElements["section"] & {
     projects?: projectType[]
@@ -32,11 +33,21 @@ export default function Projects({projects, ...props}: ProjectsProps) {
                         state={{
                             href: href, 
                             id: project.id, 
-                            prevState: state,
+                            prevState: {
+                                id: "", 
+                                title: "All Projects",
+                                href: window.location.href, 
+                            },
                             title: project.title, 
                         }}
                     >
-                        <h3 style={{fontWeight: 550, margin: "10px 0 0 10px"}}>{project.title}</h3>
+                        {/* <h3 style={{fontWeight: 550, margin: "10px 0 0 10px"}}>{project.title}</h3> */}
+                        <EditableH3 
+                            value={project.title}
+                            onTypingStopped={(header) => {
+                                editProject(project.id, header)
+                            }}
+                        />
                         <p style={{margin: "10px 0 0 10px"}}>{project.mbs.length} mood boards · Updated 1 min ago</p>
                     </ProjectThumbnail>
                 )
@@ -53,9 +64,10 @@ export default function Projects({projects, ...props}: ProjectsProps) {
                 
                 to={""}
                 mbClassName="mb-filled" 
-                style={{backgroundColor: "var(--bg-secondary)"}}
+                contStyle={{backgroundColor: "var(--bg-secondary)"}}
             >
-                <h3 style={{fontWeight: 550, margin: "10px 0 0 10px"}}>Let's create a project!</h3>
+                {/* <h3 style={{fontWeight: 550, margin: "10px 0 0 10px"}}>Let's create a project!</h3> */}
+                <EditableH3 disabled value={"Let's create a project!"}/>
                 <p style={{margin: "10px 0 0 10px"}}>Get unlimited everything on professional plan</p>
             </ProjectThumbnail>
         </section>

@@ -1,7 +1,7 @@
 // custom imports
 import { updateMoodboard, updateProject } from "./utils"
-import { tryCache, addToLocalStorage, constructUrl, filterObj, update, find, resizeImage } from "../utils"
 import { mbType, nodeType, edgeType, nodeStatusType, nodeDataType } from "./types"
+import { tryCache, addToLocalStorage, constructUrl, filterObj, update, find, resizeImage } from "../utils"
 
 // third party
 import { Edge } from "@xyflow/react"
@@ -9,8 +9,8 @@ import imageResize from 'image-resize'
 import { generateUUID } from "three/src/math/MathUtils"
 
 const IN_NODES = ["img", "txt", "sketch"]
-const mbUrl = "http://localhost:8000/api/mb"
-const dataUrl = "http://localhost:8000/api/data"
+const mbUrl = `${process.env.REACT_APP_BACKEND_URL}/mb`
+const dataUrl = `${process.env.REACT_APP_BACKEND_URL}/data`
 
 export async function getMoodboard(id: string, cache: boolean = true, useCached: boolean = true): Promise<mbType> {
     return await tryCache<mbType>(mbUrl, id, cache, useCached)
@@ -50,13 +50,13 @@ export async function editMoodboard(
     id: string, 
     title: string, 
 
-    nodes: nodeType[], 
+    nodes: nodeType[] = [], 
 
-    deleted_nodes: string[], 
-    added_nodes: nodeType[], 
+    deleted_nodes: string[] = [], 
+    added_nodes: nodeType[] = [], 
 
-    deleted_edges: string[], 
-    added_edges: edgeType[]
+    deleted_edges: string[] = [], 
+    added_edges: edgeType[] = []
 ): Promise<mbType | void> {
 
     const nodes_filtered = nodes.map(node => ({...node, data: filterObj<nodeDataType>(node.data, ["playground", "img"])}))

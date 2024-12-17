@@ -1,8 +1,6 @@
-import base64
-import requests
-
 from PIL import Image
 
+from api.process import parse_style
 from utils.img import base64_to_img
 from api.schema import Geometry, Style
 from api.vars import (
@@ -13,10 +11,16 @@ from api.vars import (
 )
 
 def generate_img(path_id: str, geo: Geometry, style: Style):
+    style_prompt = parse_style(style)
+
     if geo.prompt:
         prompt = geo.prompt 
+        if style_prompt is not None:
+            prompt = f"{prompt}. With the following style: {style_prompt}"
         gen_img = sd_client.text_to_img(prompt)
+
         img_no_bg = sd_client.remove_bg(gen_img)
+
         on_img_generated(path_id, img_no_bg)
         return img_no_bg
 
@@ -28,9 +32,16 @@ def generate_img(path_id: str, geo: Geometry, style: Style):
             img = base64_to_img(geo.sketch)
             img = sd_client.sketch_to_img(img)
 
-        caption = openai_client.caption(img)
-        structured_img = sd_client.structure(img, f"{caption}. high resolution, 8k, photorealistic")
-        
+        if geo.generatedImg:
+            img = base64_to_img(geo.generatedImg)
+            if style_prompt is None: 
+                on_img_generated(path_id, img)
+                return img
+
+        if style_prompt is None:
+            style_prompt = openai_client.caption(img)
+
+        structured_img = sd_client.structure(img, f"{style_prompt}")
         img_no_bg = sd_client.remove_bg(structured_img)
 
         on_img_generated(path_id, img_no_bg)

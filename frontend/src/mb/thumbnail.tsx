@@ -8,32 +8,37 @@ type MoodboardThumbnailProps = (LinkProps |  JSX.IntrinsicElements["div"]) & {
     mb?: mbType
     disabled?: boolean
     onAdd?: () => void
+
+    contClassName?: string
 }
 
-export default function MoodboardThumbnail({mb, onAdd, disabled, className, ...props}: MoodboardThumbnailProps) {
+export default function MoodboardThumbnail({mb, onAdd, disabled, className, contClassName, children, ...props}: MoodboardThumbnailProps) {
     return (
         disabled ? 
             <div 
                 className={`mb-thumbnail ${className}`} 
                 {...props as JSX.IntrinsicElements["div"]}
             >
+                {children}
                 <Content {...props} mb={mb} onAdd={onAdd}/>
             </div>
             :
-            <Link 
-                {...props as LinkProps}
-                className={`mb-thumbnail ${className}`} 
-            >
-                <Content {...props} mb={mb} onAdd={onAdd} />
-            </Link>
+            <div className={`mb-thumbnail flex column ${contClassName}`}>
+                {children}
+                <Link 
+                    {...props as LinkProps}
+                    className={`width-100 height-100 ${className}`} 
+                >
+                    <Content {...props} mb={mb} onAdd={onAdd} />
+                </Link>
+            </div>
     )
 }
 
-function Content({mb, onAdd, children}: MoodboardThumbnailProps) {
+function Content({onAdd}: MoodboardThumbnailProps) {
     return (
         <>
-            {onAdd && <button onClick={onAdd}>+</button>}
-            {children}
+            {onAdd && <button onClick={onAdd} className="mb-btn-add">+</button>}
         </>
     )
 }

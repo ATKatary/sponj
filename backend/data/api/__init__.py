@@ -2,6 +2,7 @@
 Data api
 """
 import uuid
+import base64
 import requests
 from io import BytesIO
 from typing import List, Tuple
@@ -114,6 +115,8 @@ def segment_mesh(request, uid: str, mid: str):
     path_id = str(uuid.uuid4())
     mesh = Mesh.objects.get(id=mid)
 
+    if mesh.labels: return 
+
     mesh_json = mesh.json()
     pending_meshes[path_id] = mid 
 
@@ -127,3 +130,27 @@ def segment_mesh(request, uid: str, mid: str):
     requests.post(url, json=body)
 
 
+@api.post("/data/mesh/style")
+def style_mesh(request, uid: str, mid: str, prompt: str, img: UploadedFile = None):
+    path_id = str(uuid.uuid4())
+    mesh = Mesh.objects.get(id=mid)
+
+    mesh_json = mesh.json()
+    pending_meshes[path_id] = mid 
+    #TODO: style the selected mesh
+
+    if img:
+        img_bytes = BytesIO(img.read())
+        img = base64.b64encode(img_bytes).decode('utf-8')
+
+    url, body = f"{AI_API_URL}/generate/mesh", {
+        'uid': uid,
+        'path_id': path_id,
+        'geo': {
+            'img': img,
+            'prompt': prompt
+        },
+        'style': {},
+    }
+
+    # requests.post(url, json=body)

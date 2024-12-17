@@ -1,8 +1,8 @@
 // custom imports
-import { Link, useLocation } from "react-router-dom"
 import { NavCrumbItemProps, NavCrumbsProps, NavItemProps, NavProps, navStateType } from "./types"
 
 // third party
+import { Link, useLocation } from "react-router-dom"
 import { IconProp } from "@fortawesome/fontawesome-svg-core"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 
@@ -46,7 +46,6 @@ export function NavCrumbs({...props}: NavCrumbsProps) {
                     )
                 })}
             </div>
-            <h1>{state?.title}</h1>
         </header>
     )
 }

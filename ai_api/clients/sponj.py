@@ -10,7 +10,7 @@ from utils.client import BaseClient
 class SponjClient(BaseClient):
     def __init__(self):
         self.log_path = f"{BASE_DIR}/logs/sponj.log"
-        self.base_url = "http://localhost:8000/api"
+        self.base_url = "http://45.33.17.11:8001/api"
         self.endpoint = {
             "notify": {
                 "node": f"{self.base_url}/data/notify/node",

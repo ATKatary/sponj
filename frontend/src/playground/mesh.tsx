@@ -28,23 +28,22 @@ export function SMesh({mesh: {id, segments, ...mesh}, autoRotate, ...props}: XMe
     const { selected } = usePlaygroundStore(useShallow(selector))
 
     return (
-        <Center>
-            <group 
-                name={id} 
-                {...props}
-                ref={groupRef} 
-            >
-                {segments?.map((segment, i) => {
-                    return (
-                        <XMesh 
-                            mesh={segment} 
-                            key={segment.id}
-                            highlight={selected === id}
-                        />
-                    )
-                })}
-            </group>
-        </Center>
+        <group 
+            name={id} 
+            {...props}
+            ref={groupRef} 
+        >
+            {segments?.map((segment, i) => {
+                const MeshComp = segment.segments.length > 0 ? SMesh : XMesh
+                return (
+                    <MeshComp 
+                        mesh={segment} 
+                        key={segment.id}
+                        highlight={selected === id}
+                    />
+                )
+            })}
+        </group>
     )
 }
 

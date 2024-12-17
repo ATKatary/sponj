@@ -1,4 +1,5 @@
 // custom imports
+import { loadingType } from "../../types"
 import { nodeStatusType, nodeType, edgeType, mbType } from "../types"
 
 // third party
@@ -43,6 +44,9 @@ export interface MoodBoardState {
     isValidPath: (path: [Node, Edge[]][]) => boolean
 
     save: () => Promise<void | mbType>
+
+    loading: loadingType
+    setLoading: (loading: loadingType) => void
 }
 
 export const selector = (state: MoodBoardState) => ({
@@ -50,6 +54,9 @@ export const selector = (state: MoodBoardState) => ({
     title: state.title,
     nodes: state.nodes,
     edges: state.edges,
+
+    loading: state.loading,
+    setLoading: state.setLoading,
     
     init: state.init,
     initNodeData: state.initNodeData,

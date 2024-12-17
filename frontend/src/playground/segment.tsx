@@ -21,7 +21,7 @@ export type XSegmentProps = MeshProps & {
 
 export function XSegment({segment: {id, vertices = [], normals, colors = [], faces = [], material, ...segment}, name, ref, autoRotate, onVerticesSelect, highlight,...props}: XSegmentProps) {
     const segmentRef = useRef<Mesh>(null!)
-    const { mode, selected, tool, setSelected, setMode } = usePlaygroundStore(useShallow(selector))
+    const { mode, selected, highlighted, tool, setSelected, setMode, addHighlight, removeHighlight } = usePlaygroundStore(useShallow(selector))
 
     useFrame((state, delta) => (autoRotate && (segmentRef.current.rotation.z += delta)))
     const { camera, scene } = useThree((state) => ({ camera: state.camera, scene: state.scene }))
@@ -84,7 +84,16 @@ export function XSegment({segment: {id, vertices = [], normals, colors = [], fac
                     case "rotate":
                     case "translate":
                     default:
-                        setSelected(id)
+                        if (event.shiftKey) {
+                            if (highlighted.includes(id)) {
+                                removeHighlight(id)
+                            } else {
+                                console.log(highlighted)
+                                addHighlight(id)
+                            }
+                        } else {
+                            setSelected(id)
+                        }
                         break 
                 }
             }}
@@ -106,8 +115,8 @@ export function XSegment({segment: {id, vertices = [], normals, colors = [], fac
                     itemSize={3} 
                     attach="attributes-color" 
                     count={colors.length / 3} 
-                    array={selected !== id && !highlight? 
-                        toFloat32Array(colors) : toFloat32Array(new Array(colors.length).fill([1, 1, 0]))
+                    array={highlighted.includes(id)? 
+                        toFloat32Array(new Array(colors.length).fill([1, 1, 0])) : toFloat32Array(colors)
                     }
                 />
             </bufferGeometry>
@@ -117,7 +126,7 @@ export function XSegment({segment: {id, vertices = [], normals, colors = [], fac
                 attach={"material"} 
                 {...material as any} 
                 wireframe={mode === "wireframe"}
-                color={selected == id && tool !== "vertexSelector" ? "yellow" : undefined} 
+                color={highlighted.includes(id) && tool !== "vertexSelector" ? "yellow" : undefined} 
             />
         </mesh>
     )

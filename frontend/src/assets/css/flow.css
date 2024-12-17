@@ -1,5 +1,9 @@
 /***** Always True *****/
 @media only screen {
+    .react-flow__pane {
+        cursor: default !important;
+    }
+
     .react-flow__minimap {
         border-radius: var(--btn-border-radius);
     }

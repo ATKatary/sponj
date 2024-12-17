@@ -1,13 +1,11 @@
 import json
-import asyncio
 from pathlib import Path
-from threading import Thread
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from utils import run_in_bg
 from api.img import generate_img
+from utils.thread import run_in_bg
 from api.segment import segment_mesh
 from api.vars import tripo3d_client, path_to_uid
 from api.mesh import generate_mesh, on_mesh_generated

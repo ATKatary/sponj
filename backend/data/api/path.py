@@ -37,7 +37,7 @@ def execute_path(uid, path_id):
     elif node.type in {"img", "sketch", "prompt", "txt"}:
         return execute_path(uid, path_id)
     
-    if len(path_queue[path_id]) == 0:
+    if path_id in path_queue and len(path_queue[path_id]) == 0:
         del path_queue[path_id]
         del path_meta[path_id]
 

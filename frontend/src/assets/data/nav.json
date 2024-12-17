@@ -1,11 +1,5 @@
 {
     "home": [
-        {
-            "id": "projects",
-            "title": "All projects",
-            "href": "/akatary/projects",
-            "icon": "fa-fas fa-folder"
-        }
     ],
 
     "playground": [

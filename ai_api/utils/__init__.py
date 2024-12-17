@@ -1,8 +1,6 @@
 import os 
 import math
 import json
-import rembg
-import asyncio
 import requests
 import numpy as np
 from io import BytesIO
@@ -11,7 +9,6 @@ from threading import Thread
 import matplotlib.colors as mcolors
 from matplotlib import pyplot as plt
 
-rembg_session = rembg.new_session()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 COLORS = mcolors.TABLEAU_COLORS
@@ -93,11 +90,3 @@ def rename(dir_path: str, ext: str, new_name: str, k = 1):
         if i > k: return renamed_files
 
   return renamed_files
-
-def run_in_bg(fn, *args, is_async=False, **kwargs):
-  target = lambda: fn(*args, **kwargs)
-  if is_async:
-    target = lambda: asyncio.run(fn(*args, **kwargs))
-    
-  thread = Thread(target=target)
-  thread.start()

@@ -2,7 +2,7 @@
 import { projectType } from "./types"
 import { tryCache, addToLocalStorage, constructUrl } from "../utils"
 
-const url = "http://localhost:8000/api/proj"
+const url = `${process.env.REACT_APP_BACKEND_URL}/proj`
 const projCacheId = (id: string) => `proj_${id}`
 
 export async function getProject(id: string): Promise<projectType> {
@@ -29,7 +29,9 @@ export async function deleteProject(id: string) {
 }
 
 export async function editProject(id: string, title: string) {
-    await fetch(constructUrl(`${url}/edit`, {id, title}), {
+    if (!id || !title) return 
+
+    await fetch(constructUrl(`${url}/edit`, {pid: id, title}), {
         method: "PUT", 
         headers: {"Content-Type": "application/json"}
     })

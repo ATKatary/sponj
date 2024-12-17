@@ -5,9 +5,9 @@ from api import api
 from utils import get
 from typing import Dict
 from http import HTTPStatus
-from data.models import Node, Edge
 from project.models import Project
 from moodboard.models import Moodboard
+from data.models import Node, Edge, Data
 from data.schema import NodeSchema, EdgeSchema
 
 @api.get("/mb")
@@ -23,6 +23,32 @@ def create_moodboard(request, pid: str) -> str:
         return {"error": "Project does not exist", "status": HTTPStatus.FORBIDDEN}
     
     moodboard = Moodboard.objects.create(owner=owner, title="New Moodboard")
+    
+    # default new moodboard
+    txt_data = Data.objects.create(title="text 0", src="")
+    txt_data.save()
+
+    txt_node = Node.objects.create(type="txt", status="static", data=txt_data, position={"x": 458.5, "y": 390.5})
+    txt_node.save()
+
+    mesh_data = Data.objects.create(title="mesh generator 0", src="")
+    mesh_data.save()
+
+    mesh_node = Node.objects.create(type="mesh", data=mesh_data, position={"x": 819.5, "y": 382.0})
+    mesh_node.save()
+
+    edge = Edge.objects.create(
+        source=txt_node, 
+        target=mesh_node,
+        sourceHandle="txt",
+        targetHandle="geometry"
+    )
+    edge.save()
+
+    moodboard.nodes.add(txt_node)
+    moodboard.nodes.add(mesh_node)
+    moodboard.edges.add(edge)
+
     project.moodboards.add(moodboard)
 
     moodboard.save()

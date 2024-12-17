@@ -3,6 +3,7 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 type ImgProps = JSX.IntrinsicElements["div"] & {
+    href?: string
     disabled?: boolean
     src?: string | File
     placeholder?: string
@@ -11,7 +12,7 @@ type ImgProps = JSX.IntrinsicElements["div"] & {
     onUpload?: (file: File) => void
 }
 
-export function Img({src = "", imgClassName, imgStyle, disabled, placeholder, className, style, onUpload, ...props}: ImgProps) {
+export function Img({src = "", href, imgClassName, imgStyle, disabled, placeholder, className, style, onUpload, ...props}: ImgProps) {
     const [name, setName] = useState<string>();
     const [img, setImg] = useState<string>();
 
@@ -45,8 +46,14 @@ export function Img({src = "", imgClassName, imgStyle, disabled, placeholder, cl
             {...props}
         >
             {!disabled && <input type="file" accept="image/*" onChange={onChange} hidden ref={inputRef}/>}
+            
             {img? 
-                <img src={img || ""} alt="uploaded" style={{...imgStyle}} className={`img ${imgClassName}`}/> 
+                href?
+                    <a href={href} target="_blank">
+                        <img src={img || ""} alt="uploaded" style={{...imgStyle}} className={`img ${imgClassName}`}/> 
+                    </a> 
+                    :
+                    <img src={img || ""} alt="uploaded" style={{...imgStyle}} className={`img ${imgClassName}`}/> 
                 : 
                 <>
                     {!disabled && <FontAwesomeIcon icon={"fa-upload" as IconProp}/>}

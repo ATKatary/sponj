@@ -13,7 +13,7 @@
     .project-thumbnail-mbs {
         gap: 0px 10px; 
         display: grid; 
-        width: calc(100% - 12.5px);
+        width: calc(100%);
         height: calc(100% - 50px);
         grid-template-rows: 50% 50%; 
         grid-template-columns: 50% 50%; 
@@ -28,6 +28,10 @@
     .project-thumbnail-mbs button {
         position: absolute;
         margin-top: calc(75px - 25px + 5px);
-        margin-left: calc(118.75px - 25px + 5px);
+        margin-left: calc(114.75px - 25px + 5px);
+    }
+
+    .project-thumbnail-mbs button:hover {
+        background-color: var(--secondary);
     }
 }

@@ -16,6 +16,7 @@ export const useMoodboardStore = create<MoodBoardState>((set, get) => ({
     title: "",
     nodes: [],
     edges: [],
+    loading: {on: false},
 
     addedNodes: [],
     deletedNodes: [],
@@ -82,6 +83,7 @@ export const useMoodboardStore = create<MoodBoardState>((set, get) => ({
         console.log(`[addNode] >> adding node ${node.id}...`)
     
         set({
+
             nodes: [...state.nodes, {...node, status} as Node],
             nodeStatus: onStatusUpdate(state.nodeStatus, node.id, "pending"),
             addedNodes: [...state.addedNodes, {...node, status} as nodeType],
@@ -131,9 +133,14 @@ export const useMoodboardStore = create<MoodBoardState>((set, get) => ({
             case "img":
             case "sketch":
                 if (data.img instanceof File) {
+                    state.setLoading({on: true, progressText: "uploading image..."})
                     uploadImgSafe(state.id, node.id, data.img)
+                    state.setLoading({on: false, progressText: ""})
+                } else {
+                    state.save()
                 }
                 break
+            case "mesh":
             case "txt":
                 state.save()
                 break
@@ -202,9 +209,9 @@ export const useMoodboardStore = create<MoodBoardState>((set, get) => ({
                 if (edge.sourceHandle !== "txt") return false
                 break
             case "style":
-                return false
-                // if (edge.sourceHandle === "mesh") return false 
-                // break 
+                // return false
+                if (["mesh", "sketch"].includes(edge.sourceHandle)) return false 
+                break 
             case "mesh":
                 break 
             case "geometry":
@@ -288,6 +295,7 @@ export const useMoodboardStore = create<MoodBoardState>((set, get) => ({
 
     save: async () => {
         const state = get()
+        state.setLoading({on: true, progressText: "saving..."})
         const updatedNodes = state.getUpdatedNodes()
 
         if (
@@ -322,8 +330,13 @@ export const useMoodboardStore = create<MoodBoardState>((set, get) => ({
             deletedNodes: [],
             
             addedEdges: [],
-            deletedEdges: [],   
+            deletedEdges: [],  
+            loading: {on: false, progressText: ""} 
         })
+    },
+
+    setLoading: (loading) => {
+        console.log(`[setLoading] >> setting loading to ${loading.on}...`)
+        set({loading})
     }
-                            
 }))

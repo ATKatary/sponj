@@ -1,15 +1,16 @@
 // custom imports
 import XCanvas from "./canvas";
 import DefaultNav from "../nav";
-import { selector } from "./state";
 import { getPlayground } from "./api";
-import { useCustomState } from "../utils";
 import ModeControls from "./controls/mode";
 import { navStateType } from "../nav/types";
 import { PlaygroundToolbar } from "./toolbar";
+import { find, useCustomState } from "../utils";
 import { usePlaygroundStore } from "./state/store";
 import { LoadingBar } from "../components/loading";
 import { MeshControls } from "./controls/meshControls";
+import { selector as playgroundSelector } from "./state";
+import { selector as userSelector } from "../user/state";
 
 // static data
 import navData from "../assets/data/nav.json";
@@ -22,12 +23,14 @@ import { useShallow } from "zustand/shallow";
 // css stylesheets
 import '../assets/css/playground.css';
 import { PlaygroundPanel } from "./panel";
+import { useUserStore } from "../user/state/store";
 
 type PlaygroundProps = JSX.IntrinsicElements["div"] & {
 }
 
 export default function Playground(props: PlaygroundProps) {
     const params = useParams()
+    const user = useUserStore(useShallow(userSelector))
     const {
         id, 
         mode,
@@ -45,7 +48,7 @@ export default function Playground(props: PlaygroundProps) {
         setLoading,
 
         ...playground
-    } = usePlaygroundStore(useShallow(selector))
+    } = usePlaygroundStore(useShallow(playgroundSelector))
     const [activeNav, setActiveNav] = useCustomState<navStateType>(navData.playground[0] as navStateType);
     
     const uid = params.uid
@@ -53,7 +56,9 @@ export default function Playground(props: PlaygroundProps) {
     const socket = useRef<WebSocket>()
 
     const initialzie = async () => {
-        if (plid) {
+        if (uid && plid) {
+            user.init(uid)
+
             deleteMesh()
             setLoading({on: true, progressText: "Initializing..."})
             const meshes = (await getPlayground(plid)).meshes
@@ -64,15 +69,17 @@ export default function Playground(props: PlaygroundProps) {
 
     useEffect(() => { 
         initialzie()
-        const sock = new WebSocket(`ws://localhost:8000/ws/user/${uid}`)
+        const sock = new WebSocket(`ws://45.33.17.11:8001/ws/user/${uid}`)
         sock.onmessage = (event) => {
             const {type, mid, data} = JSON.parse(event.data)
             switch (type) {
                 case "meshUpdate":
-                    setLoading({on: true, progressText: "Re-initializing..."})
-                    deleteMesh(mid)
-                    addMesh(data)
-                    setLoading({on: false, progressText: ""})
+                    if (find(meshes, {id: mid}, ['id'])) {
+                        setLoading({on: true, progressText: "Re-initializing..."})
+                        deleteMesh(mid)
+                        addMesh(data)
+                        setLoading({on: false, progressText: ""})
+                    }
                     break
                 default:
                     console.log(`[onmessage] >> got message of type ${type}`)
@@ -90,7 +97,10 @@ export default function Playground(props: PlaygroundProps) {
             <XCanvas meshes={meshes} mode={mode}><></></XCanvas>
 
             {/* Playground Nav */}
-            <DefaultNav data={[]} style={{zIndex: 1, right: 'var(--nav-left)', left: "auto"}}>
+            <DefaultNav 
+                user={user} 
+                style={{zIndex: 1, right: 'var(--nav-left)', left: "auto"}}
+            >
                 <button 
                     className="mb-save-btn"
                     onClick={async () => {}}

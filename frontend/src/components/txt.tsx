@@ -1,3 +1,9 @@
+// custom imports
+import { useHomeStore } from "../home/state/store";
+import { selector as homeSelector } from "../home/state";
+
+// third party
+import { useShallow } from "zustand/shallow";
 import { useEffect, useRef, useState } from "react";
 
 type TxtProps = JSX.IntrinsicElements["textarea"] & {
@@ -6,11 +12,11 @@ type TxtProps = JSX.IntrinsicElements["textarea"] & {
 }
 
 export default function Txt({text, children, onTypingStopped, onKeyUp, ...props}: TxtProps) {
-    const typing = useRef(false)
     const [rows, setRows] = useState(1)
-    const timer = useRef<NodeJS.Timeout>()
 
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
+    const { onUpdate } = CheckTyping(1000, onTypingStopped)
+
     useEffect(() => {
         if (textAreaRef.current) {
             textAreaRef.current.style.height = "0";
@@ -18,17 +24,6 @@ export default function Txt({text, children, onTypingStopped, onKeyUp, ...props}
             textAreaRef.current.style.height = `${scrollHeight - 15}px`;
         }
     }, [textAreaRef, text])
-
-    const checkTyping = () => {
-        if (typing.current) {
-            typing.current = false
-
-            if (timer.current) clearInterval(timer.current)
-            timer.current = setTimeout(checkTyping, 1000)
-        } else {
-            onTypingStopped && onTypingStopped()
-        }
-    }
 
     return (
         <textarea 
@@ -39,12 +34,37 @@ export default function Txt({text, children, onTypingStopped, onKeyUp, ...props}
                     setRows(rows + 1)
                 }
 
-                typing.current = true
-                if (timer.current) clearInterval(timer.current)
-
-                onKeyUp && onKeyUp(event)
-                timer.current = setTimeout(checkTyping, 1000)
+                onUpdate(() => onKeyUp && onKeyUp(event))
             }}
     >{children}</textarea>
     )
+}
+
+export function CheckTyping(timeout: number = 1000, onTypingStopped?: () => void) {
+    const { setLoading } = useHomeStore(useShallow(homeSelector))
+
+    const typing = useRef(false)
+    const timer = useRef<NodeJS.Timeout>()
+
+    const checkTyping = () => {
+        if (typing.current) {
+            typing.current = false
+            setLoading({on: false, progressText: ""})
+            if (timer.current) clearInterval(timer.current)
+            timer.current = setTimeout(checkTyping, timeout)
+        } else {
+            onTypingStopped && onTypingStopped()
+        }
+    }
+
+    const onUpdate = (callback?: () => void) => {
+        typing.current = true
+        setLoading({on: true, progressText: "Saving..."})
+        if (timer.current) clearInterval(timer.current)
+
+        callback && callback()
+        timer.current = setTimeout(checkTyping, timeout)
+    }
+
+    return {typing, timer, checkTyping, onUpdate}
 }

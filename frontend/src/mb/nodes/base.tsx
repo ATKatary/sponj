@@ -13,6 +13,7 @@ import { generateUUID } from "three/src/math/MathUtils";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Edge, Handle, HandleProps, Position } from "@xyflow/react";
+import { EditableH3 } from "../../components/editable";
 
 type BaseNodeProps = JSX.IntrinsicElements["div"] & {
     id: string
@@ -59,7 +60,15 @@ export default function BaseNode({id, type, hasData, title, targets = [], source
                 handles={targets}
                 position={Position.Left}
             />
-            <input value={title} className="node-title" onChange={event => updateNodeData(id, {title: event.target.value})}/>
+            <EditableH3 
+                value={title}
+                className="node-title"
+                style={{margin: 0, fontWeight: 400}}
+                onTypingStopped={(header) => {
+                    updateNodeData(id, {title: header})
+                }}
+            />
+            {/* <input value={title} className="node-title" onChange={event => updateNodeData(id, {title: event.target.value})}/> */}
             
             {status !== "pending" && children}
             {status === "pending" && <div className="spinner" onClick={() => setNodeStatus(id, "ready")}></div>}
@@ -110,9 +119,9 @@ function BaseHandle({type, position, handles, className, style, ...props}: BaseH
                     <Handle
                         {...props}
 
+                        id={handle}
                         key={id}
                         type={type}
-                        id={handle}
                         position={position}
                         className={`node-handle ${className}`}
                         style={{top: `${top}%`, width: 10, height: 10, ...style}}

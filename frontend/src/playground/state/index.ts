@@ -11,6 +11,7 @@ export interface PlaygroundState {
     selected: string
     meshes: meshType[]
     loading: loadingType
+    highlighted: string[]
     mode: playgroundModeType
     tool: playgroundToolType 
 
@@ -22,6 +23,8 @@ export interface PlaygroundState {
     updateMesh: (id: string, mesh: {title?: string, position?: Vector3, rotation?: Euler, scale?: Vector3, mtlUrl?: string, textureUrl?: string}) => void
 
     setSelected: (id: string) => void   
+    addHighlight: (id: string) => void
+    removeHighlight: (id: string) => void
     setLoading: (loading: loadingType) => void
     setMode: (mode: playgroundModeType) => void
     setTool: (tool: playgroundToolType) => void
@@ -35,6 +38,7 @@ export const selector = (state: PlaygroundState) => ({
     meshes: state.meshes,
     loading: state.loading,
     selected: state.selected,
+    highlighted: state.highlighted,
 
     init: state.init,
 
@@ -46,5 +50,7 @@ export const selector = (state: PlaygroundState) => ({
     setMode: state.setMode,
     setTool: state.setTool,
     setLoading: state.setLoading,
-    setSelected: state.setSelected
+    setSelected: state.setSelected,
+    addHighlight: state.addHighlight,
+    removeHighlight: state.removeHighlight
 })

@@ -39,12 +39,11 @@ function Sponj3d() {
         <BrowserRouter>
           <Routes>
             <Route path={"/"} element={<Home />}/>
-
-            <Route path={"/:uid"} element={<Home />}/>
+            
+            <Route path={"/:uid"} element={<Home projects/>}/>
 
             <Route path={"/:uid/mb/:mbId"} element={<Moodboard />}/>
 
-            <Route path={"/:uid/projects"} element={<Home projects/>}/>
             <Route path={"/:uid/project/:projectId"} element={<Home />}/>
 
             <Route path={"/:uid/playground/"} element={<Playground />}/>

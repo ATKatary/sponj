@@ -1,8 +1,8 @@
 import { meshType, playgroundType } from "./types"
 import { tryCache, constructUrl } from "../utils"
 
-const dataUrl = "http://localhost:8000/api/data"
-const playgroundUrl = "http://localhost:8000/api/playground"
+const dataUrl = `${process.env.REACT_APP_BACKEND_URL}/data`
+const playgroundUrl = `${process.env.REACT_APP_BACKEND_URL}/playground`
 
 export async function getPlayground(id: string): Promise<playgroundType> {
     return await tryCache<playgroundType>(playgroundUrl, id, false)

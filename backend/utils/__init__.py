@@ -9,7 +9,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 
 ALPHABET_SIZE = 26
-APP_URL = "http://localhost:8000"
+APP_URL = "http://45.33.17.11:8001"
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 WARN = "warn"

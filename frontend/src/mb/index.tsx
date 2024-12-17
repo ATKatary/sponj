@@ -1,11 +1,18 @@
 // custom imports
 import DefaultNav from "../nav"
-import { selector } from "./state"
+import { update } from "../utils"
+import { nodeType } from "./types"
 import { nodeTypes } from "./nodes"
-import { img2Base64 } from "../utils"
+import { getMoodboard } from "./api"
+import { updateMoodboard } from "./utils"
 import { MoodboardToolbar } from "./toolbar"
+import { LoadingBar } from "../components/loading"
+
+import { selector as mbSelector } from "./state"
 import { useMoodboardStore } from "./state/store"
-import { editMoodboard, getMoodboard } from "./api"
+
+import { useUserStore } from "../user/state/store"
+import { selector as userSelector } from "../user/state"
 
 // static data
 import navData from '../assets/data/nav.json'
@@ -30,6 +37,9 @@ export default function Moodboard({...props}: MoodboardProps) {
         title, 
         nodes,
         edges,
+
+        loading,
+        setLoading,
         
         init, 
         initNodeData,
@@ -55,23 +65,27 @@ export default function Moodboard({...props}: MoodboardProps) {
         
         save,
         ...flowProps
-    } =  useMoodboardStore(useShallow(selector)) as any
+    } =  useMoodboardStore(useShallow(mbSelector))
 
     const params = useParams()
-
+    const user = useUserStore(useShallow(userSelector))
+    
     const uid = params.uid
     const mbId = params.mbId
     const socket = useRef<WebSocket>()
     
     const initialzie = async () => {
-        if (mbId) {
+        if (uid && mbId) {
+            setLoading({on: true, progressText: "initializing..."})
+            user.init(uid)
             init(await getMoodboard(mbId))
+            setLoading({on: false, progressText: ""})
         }
     }
 
     useEffect(() => {
         initialzie()
-        const sock = new WebSocket(`ws://localhost:8000/ws/user/${uid}`)
+        const sock = new WebSocket(`ws://45.33.17.11:8001/ws/user/${uid}`)
         sock.onmessage = async (event) => {
             const {type, nid, status, data} = JSON.parse(event.data)
             switch (type) {
@@ -80,6 +94,11 @@ export default function Moodboard({...props}: MoodboardProps) {
                     if (nid && status) {
                         setNodeStatus(nid, status)
                         if (data) updateNodeData(nid, data)
+                        
+                        updateMoodboard(mbId!, (mb) => ({
+                            ...mb,
+                            nodes: update<nodeType>(mb.nodes, {id: nid}, ['id'], {status, data})
+                        }))
                     }
                     break
                 default:
@@ -97,7 +116,11 @@ export default function Moodboard({...props}: MoodboardProps) {
     return (
         <ReactFlowProvider>
             <div {...props} className="height-100 width-100">
-                <DefaultNav data={[]} style={{zIndex: 1, right: 'var(--nav-left)', left: "auto"}}>
+                {loading.on && <LoadingBar progressText={loading.progressText} style={{top: "var(--nav-top)"}}/>}
+                <DefaultNav 
+                    user={user} 
+                    style={{zIndex: 1, right: 'var(--nav-left)', left: "auto"}}
+                >
                     <button 
                         className="mb-save-btn"
                         onClick={async () => {}}
@@ -111,6 +134,9 @@ export default function Moodboard({...props}: MoodboardProps) {
                     edges={edges}
                     {...flowProps}
                     minZoom={0.001}
+                    panOnScroll
+                    selectionOnDrag
+                    panOnDrag={[1, 2]}
                     nodeTypes={nodeTypes}
                     proOptions={proOptions}
                     onClick={(event) => {
@@ -118,7 +144,7 @@ export default function Moodboard({...props}: MoodboardProps) {
                             setActive("")
                         }
                     }}
-                    selectNodesOnDrag={false}
+                    selectNodesOnDrag
                     className="validationflow"
                 >
                     <MiniMap position="top-left"/>

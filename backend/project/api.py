@@ -23,7 +23,7 @@ def create_project(request, uid: str):
     project.save()
     return project.json()
 
-@api.post("/proj/edit")
+@api.put("/proj/edit")
 def edit_project(request, pid: str, title: str = None):
     try:
         project = Project.objects.get(id=pid)
